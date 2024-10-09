@@ -11,4 +11,4 @@ on:
 jobs:
   call-licensed:
     name: Licensed
-    uses: actions/reusable-workflows/.github/workflows/licensed.yml@main
+    uses: actions/reusable-workflows/.github/workflows/licensed.yml@test-ubuntu24
