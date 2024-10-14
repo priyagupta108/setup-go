@@ -3,7 +3,7 @@ name: Validate 'setup-go'
 on:
   push:
     branches:
-      - test
+      - test-ubuntu24
     paths-ignore:
       - '**.md'
   pull_request:
@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go Stable
@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go oldStable
@@ -48,11 +48,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
         version: [stable, oldstable]
         architecture: [x64, x32]
         exclude:
           - os: macos-latest
+            architecture: x32
+          - os: macos-13
             architecture: x32
     steps:
       - uses: actions/checkout@v4
@@ -70,8 +72,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-24.04]
-        go: [1.20.14, 1.21.10, 1.22.3]
+        os: [macos-latest, windows-latest, ubuntu-latest, macos-13]
+        go: [1.21.13, 1.22.7]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -90,8 +92,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-latest]
-        go-version: [1.20.14, 1.21]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        go-version: [1.20.14, 1.21, 1.22, 1.23]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go and check latest
@@ -107,7 +109,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go and check latest
@@ -123,7 +125,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go and check latest
@@ -140,8 +142,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-24.04]
-        go: [1.20.14, 1.21.10, 1.22.3]
+        os: [macos-latest, windows-latest, ubuntu-latest, macos-13]
+        go: [1.20.14, 1.21.10, 1.22.8, 1.23.2]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -161,8 +163,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-24.04]
-        go: [1.20.14, 1.21]
+        os: [macos-latest, windows-latest, ubuntu-latest, macos-13]
+        go: [1.20.14, 1.21, 1.22.8, 1.23.2]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -181,8 +183,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-latest]
-        go-version: [1.20.14, 1.21]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        go-version: [1.20.14, 1.21, 1.22.8, 1.23.2]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go and check latest
