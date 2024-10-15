@@ -189,12 +189,21 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
         go-version: [1.20.14, 1.21, 1.22, 1.23]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Go and check latest
-        uses: ./
-        with:
-          go-version: ${{ matrix.go-version }}
-          architecture: ${{ if eq(matrix.os, 'macos-latest'), 'arm64', 'x64' }}
-      - name: Verify Go
-        run: go version
+        include:
+          - os: macos-latest
+            architecture: arm64
+          - os: ubuntu-latest
+            architecture: x64
+          - os: windows-latest
+            architecture: x64
+          - os: macos-13
+            architecture: x64
+        steps:
+          - uses: actions/checkout@v4
+          - name: Setup Go and check latest
+            uses: ./
+            with:
+              go-version: ${{ matrix.go-version }}
+              architecture: ${{ matrix.architecture }}
+          - name: Verify Go
+            run: go version
