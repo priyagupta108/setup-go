@@ -73,7 +73,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest, macos-13]
-        go: [1.21.13, 1.22.7]
+        go: [1.21.13, 1.22.8, 1.23.2]
+        include:
+          - os: windows-latest
+            go: 1.20.14
+        exclude:
+          - os: windows-latest
+            go: 1.23.2
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -189,6 +195,6 @@ jobs:
         uses: ./
         with:
           go-version: ${{ matrix.go-version }}
-          architecture: x64
+          architecture: ${{ if eq(matrix.os, 'macos-latest'), 'arm64', 'x64' }}
       - name: Verify Go
         run: go version
