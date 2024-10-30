@@ -88433,7 +88433,7 @@ function extractGoArchive(archivePath) {
 exports.extractGoArchive = extractGoArchive;
 function getManifest(auth) {
     return __awaiter(this, void 0, void 0, function* () {
-        return tc.getManifestFromRepo('priyagupta108', 'go-versions', auth, 'main');
+        return tc.getManifestFromRepo('priyagupta108', 'go-versions', auth, 'update-versions-manifest-file');
     });
 }
 exports.getManifest = getManifest;
