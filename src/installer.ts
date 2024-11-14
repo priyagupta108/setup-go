@@ -314,7 +314,7 @@ async function getManifestFromURL(): Promise<tc.IToolRelease[]> {
   const response = await http.getJson<tc.IToolRelease[]>(MANIFEST_URL);
 
   core.debug(
-    `TESTDEBUG Getting manifest from::::MANIFEST_URL_TEST::::${MANIFEST_URL} ${response}::::`
+    `TESTDEBUG Getting manifest from::::MANIFEST_URL_TEST::::${MANIFEST_URL} ${response.result}::::`
   );
 
   if (!response.result) {
