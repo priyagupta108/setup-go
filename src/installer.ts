@@ -312,6 +312,11 @@ async function getManifestFromURL(): Promise<tc.IToolRelease[]> {
 
   const http: httpm.HttpClient = new httpm.HttpClient('tool-cache');
   const response = await http.getJson<tc.IToolRelease[]>(MANIFEST_URL);
+
+  core.debug(
+    `TESTDEBUG Getting manifest from::::MANIFEST_URL_TEST::::${MANIFEST_URL} ${response}::::`
+  );
+
   if (!response.result) {
     throw new Error(`Unable to get manifest from ${MANIFEST_URL}`);
   }
@@ -330,7 +335,9 @@ export async function getInfoFromManifest(
     core.debug('No manifest cached');
     manifest = await getManifest(auth);
   }
-
+  core.debug(
+    `TESTDEBUG getInfoFromManifest Getting manifest from::::MANIFEST_URL_TEST:::: ::::`
+  );
   core.info(`matching ${versionSpec}...`);
 
   const rel = await tc.findFromManifest(versionSpec, stable, manifest, arch);

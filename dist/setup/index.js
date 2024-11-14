@@ -88459,6 +88459,7 @@ function getManifestFromURL() {
         core.debug('Falling back to fetching the manifest using raw URL.');
         const http = new httpm.HttpClient('tool-cache');
         const response = yield http.getJson(MANIFEST_URL);
+        core.debug(`TESTDEBUG Getting manifest from::::MANIFEST_URL_TEST::::${MANIFEST_URL} ${response}::::`);
         if (!response.result) {
             throw new Error(`Unable to get manifest from ${MANIFEST_URL}`);
         }
@@ -88472,6 +88473,7 @@ function getInfoFromManifest(versionSpec_1, stable_1, auth_1) {
             core.debug('No manifest cached');
             manifest = yield getManifest(auth);
         }
+        core.debug(`TESTDEBUG getInfoFromManifest Getting manifest from::::MANIFEST_URL_TEST:::: ::::`);
         core.info(`matching ${versionSpec}...`);
         const rel = yield tc.findFromManifest(versionSpec, stable, manifest, arch);
         if (rel && rel.files.length > 0) {
