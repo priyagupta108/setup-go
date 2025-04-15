@@ -93589,6 +93589,7 @@ function resolveStableVersionDist(versionSpec, arch) {
 }
 function resolveStableVersionInput(versionSpec, arch, platform, manifest) {
     return __awaiter(this, void 0, void 0, function* () {
+        core.info(`Setup manifest ${manifest}`);
         const releases = manifest
             .map(item => {
             const index = item.files.findIndex(item => item.arch === arch && item.filename.includes(platform));
@@ -93602,6 +93603,7 @@ function resolveStableVersionInput(versionSpec, arch, platform, manifest) {
             return releases[0];
         }
         else {
+            core.info(`Setup manifest 2 ${manifest}`);
             const versions = releases.map(release => `${semver.major(release)}.${semver.minor(release)}`);
             const uniqueVersions = Array.from(new Set(versions));
             const oldstableVersion = releases.find(item => item.startsWith(uniqueVersions[1]));
