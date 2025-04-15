@@ -501,7 +501,7 @@ export async function resolveStableVersionInput(
   platform: string,
   manifest: tc.IToolRelease[] | IGoVersion[]
 ) {
-  core.info(`Setup manifest ${manifest}`);
+  core.info(`Setup manifest stable${JSON.stringify(manifest)}`);
   const releases = manifest
     .map(item => {
       const index = item.files.findIndex(
@@ -518,7 +518,6 @@ export async function resolveStableVersionInput(
   if (versionSpec === StableReleaseAlias.Stable) {
     return releases[0];
   } else {
-    core.info(`Setup manifest 2 ${manifest}`);
     const versions = releases.map(
       release => `${semver.major(release)}.${semver.minor(release)}`
     );
