@@ -93426,7 +93426,9 @@ exports.extractGoArchive = extractGoArchive;
 function getManifest(auth) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            return yield getManifestFromRepo(auth);
+            const manifest = yield getManifestFromRepo(auth);
+            core.info(`Manifest fetched: ${JSON.stringify(manifest, null, 2)}`);
+            return manifest;
         }
         catch (err) {
             core.debug('Fetching the manifest via the API failed.');
@@ -93440,7 +93442,9 @@ function getManifest(auth) {
 exports.getManifest = getManifest;
 function getManifestFromRepo(auth) {
     core.debug(`Getting manifest from ${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}@${MANIFEST_REPO_BRANCH}`);
-    return tc.getManifestFromRepo(MANIFEST_REPO_OWNER, MANIFEST_REPO_NAME, auth, MANIFEST_REPO_BRANCH);
+    const manifest = tc.getManifestFromRepo(MANIFEST_REPO_OWNER, MANIFEST_REPO_NAME, auth, MANIFEST_REPO_BRANCH);
+    core.info(`Manifest fetched from repo: ${JSON.stringify(manifest, null, 2)}`);
+    return manifest;
 }
 function getManifestFromURL() {
     return __awaiter(this, void 0, void 0, function* () {

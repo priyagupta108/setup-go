@@ -279,7 +279,9 @@ export async function getManifest(
   auth: string | undefined
 ): Promise<tc.IToolRelease[]> {
   try {
-    return await getManifestFromRepo(auth);
+    const manifest = await getManifestFromRepo(auth);
+    core.info(`Manifest fetched: ${JSON.stringify(manifest, null, 2)}`);
+    return manifest;
   } catch (err) {
     core.debug('Fetching the manifest via the API failed.');
     if (err instanceof Error) {
@@ -295,12 +297,16 @@ function getManifestFromRepo(
   core.debug(
     `Getting manifest from ${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}@${MANIFEST_REPO_BRANCH}`
   );
-  return tc.getManifestFromRepo(
+  const manifest = tc.getManifestFromRepo(
     MANIFEST_REPO_OWNER,
     MANIFEST_REPO_NAME,
     auth,
     MANIFEST_REPO_BRANCH
   );
+
+  core.info(`Manifest fetched from repo: ${JSON.stringify(manifest, null, 2)}`);
+
+  return manifest;
 }
 
 async function getManifestFromURL(): Promise<tc.IToolRelease[]> {
