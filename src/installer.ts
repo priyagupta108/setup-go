@@ -281,10 +281,7 @@ export async function getManifest(
   try {
     const manifest = await getManifestFromRepo(auth);
     core.info(
-      `Manifest fetched debuglog 1: ${JSON.stringify(manifest, null, 2)}`
-    );
-    core.info(
-      `Manifest fetched debuglog 2: ${JSON.stringify(manifest[0], null, 2)}`
+      `Manifest fetched debuglog: ${JSON.stringify(manifest, null, 2)}`
     );
     return manifest;
   } catch (err) {
@@ -330,11 +327,7 @@ export async function getManifestFromRepo(
       MANIFEST_REPO_BRANCH
     );
     core.info(
-      `Manifest fetched from repo debuglog: ${JSON.stringify(
-        manifest,
-        null,
-        2
-      )}`
+      `Manifest fetched from repo debuglog: ${JSON.stringify(manifest)}`
     );
     return manifest;
   } catch (error) {

@@ -93427,8 +93427,7 @@ function getManifest(auth) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const manifest = yield getManifestFromRepo(auth);
-            core.info(`Manifest fetched debuglog 1: ${JSON.stringify(manifest, null, 2)}`);
-            core.info(`Manifest fetched debuglog 2: ${JSON.stringify(manifest[0], null, 2)}`);
+            core.info(`Manifest fetched debuglog: ${JSON.stringify(manifest, null, 2)}`);
             return manifest;
         }
         catch (err) {
@@ -93462,7 +93461,7 @@ function getManifestFromRepo(auth) {
         try {
             core.debug(`Getting manifest from ${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}@${MANIFEST_REPO_BRANCH}`);
             const manifest = tc.getManifestFromRepo(MANIFEST_REPO_OWNER, MANIFEST_REPO_NAME, auth, MANIFEST_REPO_BRANCH);
-            core.info(`Manifest fetched from repo debuglog: ${JSON.stringify(manifest, null, 2)}`);
+            core.info(`Manifest fetched from repo debuglog: ${JSON.stringify(manifest)}`);
             return manifest;
         }
         catch (error) {
