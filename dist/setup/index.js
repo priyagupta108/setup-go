@@ -93238,7 +93238,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.resolveStableVersionInput = exports.parseGoVersionFile = exports.makeSemver = exports.getVersionsDist = exports.findMatch = exports.getInfoFromManifest = exports.getManifest = exports.extractGoArchive = exports.getGo = void 0;
+exports.resolveStableVersionInput = exports.parseGoVersionFile = exports.makeSemver = exports.getVersionsDist = exports.findMatch = exports.getInfoFromManifest = exports.getManifestFromRepo = exports.getManifest = exports.extractGoArchive = exports.getGo = void 0;
 const tc = __importStar(__nccwpck_require__(7784));
 const core = __importStar(__nccwpck_require__(2186));
 const path = __importStar(__nccwpck_require__(1017));
@@ -93427,10 +93427,11 @@ function getManifest(auth) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const manifest = yield getManifestFromRepo(auth);
-            core.info(`Manifest fetched: ${JSON.stringify(manifest, null, 2)}`);
+            core.info(`Manifest fetched debuglog: ${JSON.stringify(manifest, null, 2)}`);
             return manifest;
         }
         catch (err) {
+            core.info(`getManifest err debuglog: ${JSON.stringify(err, null, 2)}`);
             core.debug('Fetching the manifest via the API failed.');
             if (err instanceof Error) {
                 core.debug(err.message);
@@ -93440,12 +93441,39 @@ function getManifest(auth) {
     });
 }
 exports.getManifest = getManifest;
+// function getManifestFromRepo(
+//   auth: string | undefined
+// ): Promise<tc.IToolRelease[]> {
+//   core.debug(
+//     `Getting manifest from ${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}@${MANIFEST_REPO_BRANCH}`
+//   );
+//   const manifest = tc.getManifestFromRepo(
+//     MANIFEST_REPO_OWNER,
+//     MANIFEST_REPO_NAME,
+//     auth,
+//     MANIFEST_REPO_BRANCH
+//   );
+//   core.info(`Manifest fetched from repo debuglog: ${JSON.stringify(manifest, null, 2)}`);
+//   return manifest;
+// }
 function getManifestFromRepo(auth) {
-    core.debug(`Getting manifest from ${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}@${MANIFEST_REPO_BRANCH}`);
-    const manifest = tc.getManifestFromRepo(MANIFEST_REPO_OWNER, MANIFEST_REPO_NAME, auth, MANIFEST_REPO_BRANCH);
-    core.info(`Manifest fetched from repo: ${JSON.stringify(manifest, null, 2)}`);
-    return manifest;
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            core.debug(`Getting manifest from ${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}@${MANIFEST_REPO_BRANCH}`);
+            const manifest = tc.getManifestFromRepo(MANIFEST_REPO_OWNER, MANIFEST_REPO_NAME, auth, MANIFEST_REPO_BRANCH);
+            core.info(`Manifest fetched from repo debuglog: ${JSON.stringify(manifest, null, 2)}`);
+            return manifest;
+        }
+        catch (error) {
+            core.error('Failed to fetch manifest from repo debuglog.');
+            if (error instanceof Error) {
+                core.error(`Error details debuglog: ${error.message}`);
+            }
+            throw error;
+        }
+    });
 }
+exports.getManifestFromRepo = getManifestFromRepo;
 function getManifestFromURL() {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug('Falling back to fetching the manifest using raw URL.');
@@ -93593,7 +93621,7 @@ function resolveStableVersionDist(versionSpec, arch) {
 }
 function resolveStableVersionInput(versionSpec, arch, platform, manifest) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info(`Setup manifest stable${JSON.stringify(manifest)}`);
+        core.info(`Setup manifest debuglog: ${JSON.stringify(manifest)}`);
         const releases = manifest
             .map(item => {
             const index = item.files.findIndex(item => item.arch === arch && item.filename.includes(platform));
