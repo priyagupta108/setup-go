@@ -93427,7 +93427,7 @@ function getManifest(auth) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const manifest = yield getManifestFromRepo(auth);
-            core.info(`Manifest fetched debuglog: ${JSON.stringify(manifest, null, 2)}`);
+            core.info(`Manifest fetched debuglog: ${manifest}`);
             return manifest;
         }
         catch (err) {

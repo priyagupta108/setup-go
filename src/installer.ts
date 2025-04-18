@@ -280,9 +280,7 @@ export async function getManifest(
 ): Promise<tc.IToolRelease[]> {
   try {
     const manifest = await getManifestFromRepo(auth);
-    core.info(
-      `Manifest fetched debuglog: ${JSON.stringify(manifest, null, 2)}`
-    );
+    core.info(`Manifest fetched debuglog: ${manifest}`);
     return manifest;
   } catch (err) {
     core.info(`getManifest err debuglog: ${JSON.stringify(err, null, 2)}`);
