@@ -310,7 +310,8 @@ export async function getManifest(
       core.info(`testingggggg1`);
       return manifest;
     } else {
-      core.info(`testingggggg2`);
+      core.warning(`testingggggg2`);
+      core.error(`testingggggg2`);
     }
     throw new Error(
       'The repository manifest is invalid or does not include any valid tool release (IToolRelease) entries.'
