@@ -93423,12 +93423,28 @@ function extractGoArchive(archivePath) {
     });
 }
 exports.extractGoArchive = extractGoArchive;
+function isIToolRelease(obj) {
+    return (typeof obj === 'object' &&
+        obj !== null &&
+        typeof obj.version === 'string' &&
+        typeof obj.stable === 'boolean' &&
+        Array.isArray(obj.files) &&
+        obj.files.every((file) => typeof file.filename === 'string' &&
+            typeof file.platform === 'string' &&
+            typeof file.arch === 'string' &&
+            typeof file.download_url === 'string'));
+}
 function getManifest(auth) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const manifest = yield getManifestFromRepo(auth);
             core.info(`Manifest fetched from getManifestFromRepo debuglog: ${JSON.stringify(manifest)}`);
-            return manifest;
+            if (Array.isArray(manifest) &&
+                manifest.length &&
+                manifest.every(isIToolRelease)) {
+                return manifest;
+            }
+            throw new Error('The repository manifest is invalid or does not include any valid tool release (IToolRelease) entries.');
         }
         catch (err) {
             core.info(`getManifest err debuglog: ${JSON.stringify(err)}`);

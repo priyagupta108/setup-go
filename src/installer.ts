@@ -275,6 +275,23 @@ export async function extractGoArchive(archivePath: string): Promise<string> {
   return extPath;
 }
 
+function isIToolRelease(obj: any): obj is tc.IToolRelease {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.version === 'string' &&
+    typeof obj.stable === 'boolean' &&
+    Array.isArray(obj.files) &&
+    obj.files.every(
+      (file: any) =>
+        typeof file.filename === 'string' &&
+        typeof file.platform === 'string' &&
+        typeof file.arch === 'string' &&
+        typeof file.download_url === 'string'
+    )
+  );
+}
+
 export async function getManifest(
   auth: string | undefined
 ): Promise<tc.IToolRelease[]> {
@@ -285,7 +302,16 @@ export async function getManifest(
         manifest
       )}`
     );
-    return manifest;
+    if (
+      Array.isArray(manifest) &&
+      manifest.length &&
+      manifest.every(isIToolRelease)
+    ) {
+      return manifest;
+    }
+    throw new Error(
+      'The repository manifest is invalid or does not include any valid tool release (IToolRelease) entries.'
+    );
   } catch (err) {
     core.info(`getManifest err debuglog: ${JSON.stringify(err)}`);
     core.debug('Fetching the manifest via the API failed.');
