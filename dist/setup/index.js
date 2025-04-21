@@ -93442,14 +93442,12 @@ function getManifest(auth) {
             if (Array.isArray(manifest) &&
                 manifest.length &&
                 manifest.every(isIToolRelease)) {
-                core.info(`testingggggg1`);
                 return manifest;
             }
             else {
-                core.warning(`testingggggg2`);
-                core.error(`testingggggg2`);
+                core.warning(`testingggggg debuglog`);
             }
-            throw new Error('The repository manifest is invalid or does not include any valid tool release (IToolRelease) entries.');
+            throw new Error();
         }
         catch (err) {
             core.info(`getManifest err debuglog: ${JSON.stringify(err)}`);
