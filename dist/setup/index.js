@@ -93447,7 +93447,7 @@ function getManifest(auth) {
             else {
                 core.warning(`testingggggg2 debuglog`);
             }
-            throw new Error('An unexpected error occurred while fetching the manifest.');
+            throw 'An unexpected error occurred while fetching the manifest.';
         }
         catch (err) {
             core.info(`getManifest err debuglog: ${JSON.stringify(err)}`);
