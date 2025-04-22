@@ -308,10 +308,20 @@ export async function getManifest(
       manifest.every(isIToolRelease)
     ) {
       return manifest;
+    } else if (
+      typeof manifest === 'object' &&
+      manifest !== null &&
+      'message' in manifest
+    ) {
+      core.warning(`testingggggg1 debuglog`);
+      const errorMessage = (manifest as {message: string}).message;
+      throw new Error(errorMessage);
     } else {
       core.warning(`testingggggg2 debuglog`);
+      throw new Error(
+        'An unexpected error occurred while fetching the manifest.'
+      );
     }
-    throw 'An unexpected error occurred while fetching the manifest.';
   } catch (err) {
     core.info(`getManifest err debuglog: ${JSON.stringify(err)}`);
     core.debug('Fetching the manifest via the API failed.');
