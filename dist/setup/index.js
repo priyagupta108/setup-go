@@ -93444,20 +93444,16 @@ function getManifest(auth) {
                 manifest.every(isIToolRelease)) {
                 return manifest;
             }
-            else if (typeof manifest === 'object' &&
+            let errorMessage = 'An unexpected error occurred while fetching the manifest.';
+            if (typeof manifest === 'object' &&
                 manifest !== null &&
                 'message' in manifest) {
-                core.warning(`testingggggg1 debuglog`);
-                const errorMessage = manifest.message;
-                throw new Error(errorMessage);
+                core.warning(`testingggggg debuglog`);
+                errorMessage = manifest.message;
             }
-            else {
-                core.warning(`testingggggg2 debuglog`);
-                throw new Error('An unexpected error occurred while fetching the manifest.');
-            }
+            throw new Error(errorMessage);
         }
         catch (err) {
-            core.info(`getManifest err debuglog: ${JSON.stringify(err)}`);
             core.debug('Fetching the manifest via the API failed.');
             if (err instanceof Error) {
                 core.debug(err.message);
@@ -93471,31 +93467,6 @@ function getManifestFromRepo(auth) {
     core.debug(`Getting manifest from ${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}@${MANIFEST_REPO_BRANCH}`);
     return tc.getManifestFromRepo(MANIFEST_REPO_OWNER, MANIFEST_REPO_NAME, auth, MANIFEST_REPO_BRANCH);
 }
-// export async function getManifestFromRepo(
-//   auth: string | undefined
-// ): Promise<tc.IToolRelease[]> {
-//   try {
-//     core.debug(
-//       `Getting manifest from ${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}@${MANIFEST_REPO_BRANCH}`
-//     );
-//     const manifest = await tc.getManifestFromRepo(
-//       MANIFEST_REPO_OWNER,
-//       MANIFEST_REPO_NAME,
-//       auth,
-//       MANIFEST_REPO_BRANCH
-//     );
-//     core.info(
-//       `Manifest fetched from repo debuglog 1: ${JSON.stringify(manifest)}`
-//     );
-//     return manifest;
-//   } catch (error) {
-//     core.error('Failed to fetch manifest from repo debuglog.');
-//     if (error instanceof Error) {
-//       core.error(`Error details debuglog: ${error.message}`);
-//     }
-//     throw error;
-//   }
-// }
 function getManifestFromURL() {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug('Falling back to fetching the manifest using raw URL.');
@@ -93643,7 +93614,6 @@ function resolveStableVersionDist(versionSpec, arch) {
 }
 function resolveStableVersionInput(versionSpec, arch, platform, manifest) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info(`Setup manifest debuglog: ${JSON.stringify(manifest)}`);
         const releases = manifest
             .map(item => {
             const index = item.files.findIndex(item => item.arch === arch && item.filename.includes(platform));
