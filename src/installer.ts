@@ -313,11 +313,17 @@ export async function getManifest(
       'message' in manifest
     ) {
       errorMessage = (manifest as {message: string}).message;
+      core.warning(
+        'Test log to identify rate limit failure with PR in try block'
+      );
     }
     throw new Error(errorMessage);
   } catch (err) {
     core.debug('Fetching the manifest via the API failed.');
     if (err instanceof Error) {
+      core.warning(
+        'the throw new Error(...) is immediately caught by a try-catch block. Inside the catch, the error message is logged using core.debug(...)'
+      );
       core.debug(err.message);
     }
   }
