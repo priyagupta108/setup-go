@@ -93481,7 +93481,7 @@ function getManifest(auth) {
             return yield getManifestFromRepo(auth);
         }
         catch (err) {
-            core.info('Test log to identify rate limit failure');
+            core.warning('Test log to identify rate limit failure');
             core.debug('Fetching the manifest via the API failed.');
             if (err instanceof Error) {
                 core.debug(err.message);
