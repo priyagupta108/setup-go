@@ -3,7 +3,7 @@ name: Validate Windows installation
 on:
   push:
     branches:
-      - main
+      - test-windows-2025-runner
     paths-ignore:
       - '**.md'
   pull_request:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   create-link-if-not-default:
-    runs-on: windows-latest
+    runs-on: windows-2025
     name: 'Validate if symlink is created'
     strategy:
       matrix:
@@ -69,7 +69,7 @@ jobs:
 
   find-default-go:
     name: 'Find default go version'
-    runs-on: windows-latest
+    runs-on: windows-2025
     outputs:
       version: ${{ steps.goversion.outputs.version }}
     steps:
@@ -82,7 +82,7 @@ jobs:
 
   dont-create-link-if-default:
     name: 'Validate if symlink is not created for default go'
-    runs-on: windows-latest
+    runs-on: windows-2025
     needs: find-default-go
     strategy:
       matrix:
@@ -115,7 +115,7 @@ jobs:
 
   hostedtoolcache:
     name: 'Validate if hostedtoolcache works as expected'
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       matrix:
         cache: [false]
