@@ -36,7 +36,7 @@ jobs:
             echo 'Size of the link created on drive c: must be 0'
             exit 1
           fi
-        shell: bash
+        shell: pwsh
 
       # Drive D: is small, take care the action does not eat up the space
       - name: 'Drive D: space usage should be below 1G'
