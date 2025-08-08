@@ -27,7 +27,12 @@ jobs:
           go-version: ${{ matrix.go }}
           cache: ${{ matrix.cache }}
 
+      - name: 'Debug: show link or directory details'
+        run: |
+          ls -l 'C:\hostedtoolcache\windows\go\${{ matrix.go }}\x64'
+        shell: bash
       - name: 'Drive C: should have zero size link'
+      
         run: |
           du -m -s 'C:\hostedtoolcache\windows\go\${{ matrix.go }}\x64'
           # make sure drive c: contains only a link
@@ -36,7 +41,7 @@ jobs:
             echo 'Size of the link created on drive c: must be 0'
             exit 1
           fi
-        shell: pwsh
+        shell: bash
 
       # Drive D: is small, take care the action does not eat up the space
       - name: 'Drive D: space usage should be below 1G'
