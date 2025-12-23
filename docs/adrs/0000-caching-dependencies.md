@@ -1,5 +1,5 @@
 # 0. Caching dependencies
-Date: 2022-04-13
+Date: 2025-12-15
 
 Status: Accepted
 
@@ -20,9 +20,9 @@ We don't pursue the goal to provide wide customization of caching in scope of `a
   - `true` - enable caching for go dependencies
   - `false`- disable caching for go dependencies. This value will be set as default value
 - Cache feature will be disabled by default to make sure that we don't break existing customers. We will consider enabling cache by default in next major releases
-- Action will try to search a go.sum files in the repository and throw error in the scenario that it was not found
+- Action will try to search a go.mod files in the repository and throw error in the scenario that it was not found
 - The hash of found file will be used as cache key (the same approach like [actions/cache](https://github.com/actions/cache/blob/main/examples.md#go---modules) recommends)
-- The following key cache will be used `${{ runner.os }}-go${{ go-version }}-${{ hashFiles('<go.sum-path>') }}`
+- The following key cache will be used `${{ runner.os }}-go${{ go-version }}-${{ hashFiles('<go.mod-path>') }}`
 - Action will cache global cache from the `go env GOMODCACHE` and `go env GOCACHE` commands.
 - Add a `cache-dependency-path` input parameter to `actions/setup-go`. The new input will accept an array or regex of dependency files. The field will accept a path (relative to the repository root) to dependency files. If the provided path contains wildcards, the action will search all matching files and calculate a common hash like the ${{ hashFiles('**/go.sum') }} YAML construction does.
 

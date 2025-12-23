@@ -257,7 +257,7 @@ The action features integrated caching for Go modules and build outputs. Built o
 
 #### Automatic Caching
 
-Default behavior: Searches for `go.sum` in the repository root and uses its hash for the cache key.
+Default behavior: Searches for `go.mod` in the repository root and uses its hash for the cache key.
 
 ```yaml
 steps:

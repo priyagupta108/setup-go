@@ -87951,7 +87951,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.supportedPackageManagers = void 0;
 exports.supportedPackageManagers = {
     default: {
-        dependencyFilePattern: 'go.sum',
+        dependencyFilePattern: 'go.mod',
         cacheFolderCommandList: ['go env GOMODCACHE', 'go env GOCACHE']
     }
 };
