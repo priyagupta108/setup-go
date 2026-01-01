@@ -1,6 +1,7 @@
 import * as cache from '@actions/cache';
 import * as core from '@actions/core';
 import * as glob from '@actions/glob';
+import fs from 'fs';
 
 import * as cacheRestore from '../src/cache-restore';
 import * as cacheUtils from '../src/cache-utils';
@@ -95,5 +96,20 @@ describe('restoreCache', () => {
       cacheDependencyPath
     );
     expect(setOutputSpy).toHaveBeenCalledWith('cache-hit', true);
+  });
+
+  it('should throw if dependency file is not found in workspace', async () => {
+    process.env.GITHUB_WORKSPACE = '/test/workspace';
+    jest.spyOn(fs, 'readdirSync').mockReturnValue(['main.go'] as any);
+
+    await expect(async () => {
+      await cacheRestore.restoreCache(
+        versionSpec,
+        packageManager
+        // No cacheDependencyPath
+      );
+    }).rejects.toThrow(
+      'Dependencies file is not found in /test/workspace. Supported file pattern: go.mod'
+    );
   });
 });
