@@ -43,9 +43,6 @@ toolchain go1.23.2  // V6 uses this exact version
 **Intelligent Caching**
 Cache keys now incorporate the `toolchain` directive version from `go.mod`, eliminating cache conflicts when switching between different toolchain versions within the same Go minor release.
 
-**Cache Key Update**
-By default, caching for Go modules now relies on `go.mod`. To use `go.sum`, configure the `cache-dependency-path` input.
-
 For more details, see the [full release notes](https://github.com/actions/setup-go/releases/tag/v6.0.0).
 
 ### V5 Changes
