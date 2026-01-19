@@ -18,8 +18,7 @@ The V6 edition of the action offers:
 
  - **Go Toolchain**  
     - Supports both `go` and `toolchain` directives in `go.mod` (e.g. `toolchain go1.24.2`). If the `toolchain` directive is present, its version is used; otherwise, the action falls back to the go directive.
-    - Cache keys now include the `toolchain` version, preventing conflicts when switching between different toolchain versions within the same Go minor release.
-
+    
  - **Cache Key Update**
     - By default, caching for Go modules now relies on `go.mod`. To use `go.sum`, configure the `cache-dependency-path` input.
 
