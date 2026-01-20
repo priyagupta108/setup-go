@@ -30,7 +30,7 @@ steps:
 - See [Release Notes](https://github.com/actions/runner/releases/tag/v2.327.1) for more details
 
 #### Enhanced Go Toolchain Management
-V6 introduces significant improvements for reliable and consistent Go version selection. Supports both `go` and `toolchain` directives in `go.mod` (e.g. `toolchain go1.24.2`). If the `toolchain` directive is present, its version is used; otherwise, the action falls back to the go directive.
+V6 introduces significant improvements for reliable and consistent Go version selection. Supports both `go` and `toolchain` directives in `go.mod`. If the `toolchain` directive is present, its version is used; otherwise, the action falls back to the go directive.
    
 #### Cache Key Update
 By default, caching for Go modules now relies on `go.mod`. To use `go.sum`, configure the `cache-dependency-path` input.
