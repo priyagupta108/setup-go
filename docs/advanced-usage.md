@@ -1,11 +1,16 @@
 # Advanced Usage
 - [Using the go-version input](advanced-usage.md#using-the-go-version-input)
     - [Specifying a go version](advanced-usage.md#specifying-a-go-version)
-    - [Matrix Testing](advanced-usage.md#matrix-testing)
+    - [Matrix testing](advanced-usage.md#matrix-testing)
 - [Using the go-version-file input](advanced-usage.md#using-the-go-version-file-input)
 - [Check latest version](advanced-usage.md#check-latest-version)
 - [Caching](advanced-usage.md#caching)
-- [Restore-Only Cache](advanced-usage.md#restore-only-cache)
+    - [Caching in monorepos](advanced-usage.md#caching-in-monorepos)
+    - [Caching in multi-module repositories](advanced-usage.md#caching-in-multi-module-repositories)
+    - [Multi-target builds](advanced-usage.md#multi-target-builds)
+    - [Cache invalidation on source changes](advanced-usage.md#cache-invalidation-on-source-changes)
+    - [Restore-only caches](advanced-usage.md#restore-only-caches)
+    - [Parallel builds](advanced-usage.md#parallel-builds)
 - [Outputs](advanced-usage.md#outputs)
 - [Using `setup-go` on GHES](advanced-usage.md#using-setup-go-on-ghes)
 
@@ -109,7 +114,7 @@ steps:
   - run: go version
 ```
 
-### Matrix Testing
+### Matrix testing
 
 Using `setup-go` it's possible to use the [matrix syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix) to install several versions of Go:
 
@@ -229,9 +234,7 @@ steps:
 
 ## Caching
  
-**Default Caching**
-
-By default, the action searches for **go.mod** in the repository root and uses its hash as part of the cache key.
+### Caching in monorepos
 
 ```yaml
 steps:
@@ -239,109 +242,137 @@ steps:
   - uses: actions/setup-go@v6
     with:
       go-version: '1.25'
-      # cache: true (default)
+      cache-dependency-path: subdir/go.sum
   - run: go run hello.go
 ```
 
-**Disable Caching**
+### Caching in multi-module repositories
+
+`cache-dependency-path` input accepts glob patterns and multi-line values:
+
 ```yaml
 steps:
   - uses: actions/checkout@v6
   - uses: actions/setup-go@v6
     with:
       go-version: '1.25'
-      cache: false
+      cache-dependency-path: '**/go.sum'
   - run: go run hello.go
 ```
 
-**Using a list of file paths to cache dependencies**
 ```yaml
-# Example: Monorepo with multiple go.sum files
 steps:
   - uses: actions/checkout@v6
   - uses: actions/setup-go@v6
     with:
       go-version: '1.25'
-      check-latest: true
       cache-dependency-path: |
         subdir/go.sum
         tools/go.sum
   - run: go run hello.go
 ```
 
-**Using wildcard patterns to cache dependencies**
+### Multi-target builds
+
+`cache-dependency-path` isn’t limited to dependency files (like `go.sum`). It can also include files that capture build settings (for example, `GOOS`/`GOARCH`). This allows separate caches per target platform (OS/architecture) and helps avoid reusing caches across incompatible builds.
+
 ```yaml
-# Example: Using glob patterns to match all go.sum files
+env:
+  GOOS: ...
+  GOARCH: ...
+
 steps:
+  - run: echo "$GOOS $GOARCH" > env.txt
+
   - uses: actions/checkout@v6
   - uses: actions/setup-go@v6
     with:
       go-version: '1.25'
-      cache-dependency-path: "**/*.sum"
-  - run: go run hello.go
+      cache-dependency-path: |
+        go.sum
+        env.txt
+  - run: go run hello.go    
 ```
 
-## Restore-Only Cache
+### Cache invalidation on source changes
 
-Restore cache without saving it. This can help reduce cache writes and storage usage in workflows that only need to read from the cache:
+Besides dependencies, the action can also cache build outputs (the [`GOCACHE`](https://pkg.go.dev/cmd/go#hdr-Build_and_test_caching) directory). By default, this cache is not updated based on source changes to help avoid unpredictable and frequent cache invalidation. To invalidate the cache when source files change, include source files in the `cache-dependency-path` input.
+
+```yaml
+- uses: actions/checkout@v6
+- uses: actions/setup-go@v6
+  with:
+    go-version: '1.25'
+    cache-dependency-path: go.sum **/*.go
+- run: go run hello.go
+```
+
+### Restore-only caches
+
+Restore caches without saving new entries. This can help reduce cache writes and storage usage in workflows that only need to read from the cache:
 
 ```yaml
 jobs:
-    build:
-      runs-on: ${{ matrix.os }}
-      strategy:
-        matrix:
-          os: [ubuntu-latest, macos-latest, windows-latest]
-      steps:
-        - uses: actions/checkout@v6
-        - name: Setup Go
-          id: setup-go
-          uses: actions/setup-go@v6
-          with:
-            go-version: '1.25.5'
-            cache: false
-        # Capture Go cache locations
-        - name: Set Go cache variables (Linux/macOS)
-          if: runner.os != 'Windows'
-          run: |
-            echo "GO_MOD_CACHE=$(go env GOMODCACHE)" >> $GITHUB_ENV
-            echo "GO_BUILD_CACHE=$(go env GOCACHE)" >> $GITHUB_ENV
-        - name: Set Go cache variables (Windows)
-          if: runner.os == 'Windows'
-          shell: pwsh
-          run: |
-            echo "GO_MOD_CACHE=$(go env GOMODCACHE)" | Out-File $env:GITHUB_ENV -Append
-            echo "GO_BUILD_CACHE=$(go env GOCACHE)"   | Out-File $env:GITHUB_ENV -Append
-        # Normalize runner.arch to lowercase to ensure consistent cache keys
-        - name: Normalize runner architecture (Linux/macOS)
-          if: runner.os != 'Windows'
-          shell: bash
-          run: echo "ARCH=$(echo '${{ runner.arch }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-        - name: Normalize runner architecture (Windows)
-          if: runner.os == 'Windows'
-          shell: pwsh
-          run: |
-            $arch = "${{ runner.arch }}".ToLower()
-            echo "ARCH=$arch" | Out-File $env:GITHUB_ENV -Append
-        - name: Set cache OS suffix for Linux
-          if: runner.os == 'Linux'
-          shell: bash
-          run: echo "CACHE_OS_SUFFIX=$ImageOS-" >> $GITHUB_ENV    
-        - name: Restore Go cache
-          id: go-cache
-          uses: actions/cache/restore@v5
-          with:
-            path: |
-              ${{ env.GO_MOD_CACHE }}
-              ${{ env.GO_BUILD_CACHE }}
-            key: setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.CACHE_OS_SUFFIX }}go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.mod') }}
-        - name: Download modules
-          run: go mod download
-        - name: Build
-          run: go build ./...
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Go
+        id: setup-go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.5'
+          cache: false
+      # Capture Go cache locations
+      - name: Set Go cache variables (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          echo "GO_MOD_CACHE=$(go env GOMODCACHE)" >> $GITHUB_ENV
+          echo "GO_BUILD_CACHE=$(go env GOCACHE)" >> $GITHUB_ENV
+      - name: Set Go cache variables (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          echo "GO_MOD_CACHE=$(go env GOMODCACHE)" | Out-File $env:GITHUB_ENV -Append
+          echo "GO_BUILD_CACHE=$(go env GOCACHE)"   | Out-File $env:GITHUB_ENV -Append
+      # Normalize runner.arch to lowercase to ensure consistent cache keys
+      - name: Normalize runner architecture (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: echo "ARCH=$(echo '${{ runner.arch }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Normalize runner architecture (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $arch = "${{ runner.arch }}".ToLower()
+          echo "ARCH=$arch" | Out-File $env:GITHUB_ENV -Append
+      - name: Set cache OS suffix for Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: echo "CACHE_OS_SUFFIX=$ImageOS-" >> $GITHUB_ENV
+      - name: Restore Go cache
+        id: go-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ${{ env.GO_MOD_CACHE }}
+            ${{ env.GO_BUILD_CACHE }}
+          key: setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.CACHE_OS_SUFFIX }}go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.mod') }}
+      - name: Download modules
+        run: go mod download
+      - name: Build
+        run: go build ./...
 ```
+
 > If there are several builds on the same repo, it may make sense to create a cache in one build and use it in others. The action [actions/cache/restore](https://github.com/actions/cache/tree/main/restore#only-restore-cache)
 should be used in this case.
+
+### Parallel builds
+
+To avoid race conditions during parallel builds, either use distinct cache keys with [actions/cache](https://github.com/actions/cache/blob/main/examples.md#go---modules), or create the cache in only one build and [restore](#restore-only-caches) it in the other builds.
 
 ## Outputs
 
@@ -397,7 +428,7 @@ If that fails as well you can get a higher rate limit with [generating a persona
 uses: actions/setup-go@v6
 with:
   token: ${{ secrets.GH_DOTCOM_TOKEN }}
-  go-version: '1.24'
+  go-version: '1.25'
 ```
 
 ### No access to github.com

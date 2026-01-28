@@ -69,17 +69,18 @@ For more usage examples, please refer to the section: [Using go-version input](d
 
 ## Caching dependency files and build outputs
 
-The action has a built-in functionality for caching and restoring go modules and build outputs. It
-uses [toolkit/cache](https://github.com/actions/toolkit/tree/main/packages/cache) under the hood but requires less configuration settings.
-The `cache` input is optional, and caching is turned on by default.
+The action includes built-in caching and restoration for Go modules and build outputs. It uses
+[toolkit/cache](https://github.com/actions/toolkit/tree/main/packages/cache) under the hood, but requires less configuration.
+The `cache` input is optional, and caching is enabled by default. To disable caching, set `cache: false`.
 
-The action defaults to search for the dependency file - **go.mod** in the repository root, and uses its hash as a part of
-the cache key. Use `cache-dependency-path` input for cases when multiple dependency files are used, or they are located
-in different subdirectories. The input supports glob patterns.
+By default, the action looks for the dependency file **go.mod** in the repository root and uses its hash as part of the
+cache key. Use the `cache-dependency-path` input when you have multiple dependency files, or when they’re located in
+different subdirectories. This input supports glob patterns.
 
-If a problem prevents successful caching, the action issues a warning in the logs but continues workflow execution of the pipeline.
+If caching cannot be performed for any reason, the action logs a warning and continues workflow execution.
 
-See examples of using `cache` and `cache-dependency-path` in the section: [Caching](docs/advanced-usage.md#caching) of the [Advanced usage](docs/advanced-usage.md) guide.
+For examples of using `cache-dependency-path`, see the [Caching](docs/advanced-usage.md#caching) section of the [Advanced usage](docs/advanced-usage.md) guide.
+
 
 ## Advanced usage
 
