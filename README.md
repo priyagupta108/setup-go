@@ -3,7 +3,7 @@
 [![Basic validation](https://github.com/actions/setup-go/actions/workflows/basic-validation.yml/badge.svg)](https://github.com/actions/setup-go/actions/workflows/basic-validation.yml)
 [![Validate 'setup-go'](https://github.com/actions/setup-go/actions/workflows/versions.yml/badge.svg)](https://github.com/actions/setup-go/actions/workflows/versions.yml)
 
-This action sets up a go environment for use in actions by:
+This action sets up a Go environment for use in GitHub Actions by:
 
 - Optionally downloading and caching a version of Go by version and adding it to the PATH
 - Optionally caching Go modules and build outputs
@@ -17,7 +17,7 @@ The V6 edition of the action offers:
      >Make sure your runner is on version v2.327.1 or later to ensure compatibility with this release. See [Release Notes](https://github.com/actions/runner/releases/tag/v2.327.1)
 
  - **Go Toolchain**  
-    - Supports both `go` and `toolchain` directives in `go.mod` (e.g. `toolchain go1.24.2`). If the `toolchain` directive is present, its version is used; otherwise, the action falls back to the go directive.
+    - Supports both `go` and `toolchain` directives in `go.mod`. If the `toolchain` directive is present, its version is used; otherwise, the action falls back to the go directive.
     
  - **Cache Key Update**
     - By default, caching for Go modules now relies on `go.mod`. To use `go.sum`, configure the `cache-dependency-path` input.
