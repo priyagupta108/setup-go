@@ -1,12 +1,52 @@
-import * as exec from '@actions/exec';
-import * as cache from '@actions/cache';
-import * as core from '@actions/core';
-import * as cacheUtils from '../src/cache-utils';
-import {PackageManagerInfo} from '../src/package-managers';
+import {jest, describe, it, expect, beforeEach, afterAll} from '@jest/globals';
+
+jest.unstable_mockModule('@actions/exec', () => ({
+  exec: jest.fn(),
+  getExecOutput: jest.fn()
+}));
+
+jest.unstable_mockModule('@actions/cache', () => ({
+  saveCache: jest.fn(),
+  restoreCache: jest.fn(),
+  isFeatureAvailable: jest.fn()
+}));
+
+jest.unstable_mockModule('@actions/core', () => ({
+  info: jest.fn(),
+  warning: jest.fn(),
+  debug: jest.fn(),
+  error: jest.fn(),
+  notice: jest.fn(),
+  setFailed: jest.fn(),
+  setOutput: jest.fn(),
+  getInput: jest.fn(),
+  getBooleanInput: jest.fn(),
+  getMultilineInput: jest.fn(),
+  addPath: jest.fn(),
+  exportVariable: jest.fn(),
+  saveState: jest.fn(),
+  getState: jest.fn(),
+  setSecret: jest.fn(),
+  isDebug: jest.fn(() => false),
+  startGroup: jest.fn(),
+  endGroup: jest.fn(),
+  group: jest.fn((_name: string, fn: () => Promise<unknown>) => fn()),
+  toPlatformPath: jest.fn((p: string) => p),
+  toWin32Path: jest.fn((p: string) => p),
+  toPosixPath: jest.fn((p: string) => p)
+}));
+
+const exec = await import('@actions/exec');
+const cache = await import('@actions/cache');
+const core = await import('@actions/core');
+const cacheUtils = await import('../src/cache-utils.js');
+import type {PackageManagerInfo} from '../src/package-managers.js';
 
 describe('getCommandOutput', () => {
   //Arrange
-  const getExecOutputSpy = jest.spyOn(exec, 'getExecOutput');
+  const getExecOutputSpy = exec.getExecOutput as jest.Mock<
+    typeof exec.getExecOutput
+  >;
 
   it('should return trimmed stdout in case of successful exit code', async () => {
     //Arrange
@@ -70,7 +110,9 @@ describe('getPackageManagerInfo', () => {
 
 describe('getCacheDirectoryPath', () => {
   //Arrange
-  const getExecOutputSpy = jest.spyOn(exec, 'getExecOutput');
+  const getExecOutputSpy = exec.getExecOutput as jest.Mock<
+    typeof exec.getExecOutput
+  >;
 
   const validPackageManager: PackageManagerInfo = {
     dependencyFilePattern: 'go.mod',
@@ -144,8 +186,10 @@ describe('getCacheDirectoryPath', () => {
 
 describe('isCacheFeatureAvailable', () => {
   //Arrange
-  const isFeatureAvailableSpy = jest.spyOn(cache, 'isFeatureAvailable');
-  const warningSpy = jest.spyOn(core, 'warning');
+  const isFeatureAvailableSpy = cache.isFeatureAvailable as jest.Mock<
+    typeof cache.isFeatureAvailable
+  >;
+  const warningSpy = core.warning as jest.Mock<typeof core.warning>;
 
   it('should return true when cache feature is available', () => {
     //Arrange
@@ -214,7 +258,6 @@ describe('isGhes', () => {
   const pristineEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
     process.env = {...pristineEnv};
   });
 
