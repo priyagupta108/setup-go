@@ -209,6 +209,7 @@ describe('setup-go', () => {
     // clear out env vars set during 'run'
     delete process.env[im.GOTOOLCHAIN_ENV_VAR];
     delete process.env['GO_DOWNLOAD_BASE_URL'];
+    process.exitCode = 0;
 
     //jest.resetAllMocks();
     jest.clearAllMocks();
