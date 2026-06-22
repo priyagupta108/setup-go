@@ -104,16 +104,16 @@ describe('setup-go', () => {
   let inputs = {} as any;
   let os = {} as any;
 
-  let inSpy: jest.Mock;
-  let getBooleanInputSpy: jest.Mock;
-  let exportVarSpy: jest.Mock;
+  let inSpy: jest.Mock<typeof core.getInput>;
+  let getBooleanInputSpy: jest.Mock<typeof core.getBooleanInput>;
+  let exportVarSpy: jest.Mock<typeof core.exportVariable>;
   let findSpy: jest.Mock;
   let cnSpy: jest.SpiedFunction<typeof process.stdout.write>;
   let logSpy: jest.Mock;
   let getSpy: jest.Mock;
   let platSpy: jest.Mock;
   let archSpy: jest.Mock;
-  let joinSpy: jest.Mock;
+  let joinSpy: jest.Mock<typeof path.join>;
   let dlSpy: jest.Mock;
   let extractTarSpy: jest.Mock;
   let extractZipSpy: jest.Mock;
@@ -139,11 +139,13 @@ describe('setup-go', () => {
 
     // @actions/core
     inputs = {};
-    inSpy = core.getInput as jest.Mock;
+    inSpy = core.getInput as jest.Mock<typeof core.getInput>;
     inSpy.mockImplementation(name => inputs[name]);
-    getBooleanInputSpy = core.getBooleanInput as jest.Mock;
+    getBooleanInputSpy = core.getBooleanInput as jest.Mock<
+      typeof core.getBooleanInput
+    >;
     getBooleanInputSpy.mockImplementation(name => inputs[name]);
-    exportVarSpy = core.exportVariable as jest.Mock;
+    exportVarSpy = core.exportVariable as jest.Mock<typeof core.exportVariable>;
 
     // node
     os = {};
@@ -158,7 +160,7 @@ describe('setup-go', () => {
     });
 
     // switch path join behaviour based on set os.platform
-    joinSpy = path.join as jest.Mock;
+    joinSpy = path.join as jest.Mock<typeof path.join>;
     joinSpy.mockImplementation((...paths: string[]): string => {
       if (os['platform'] == 'win32') {
         return win32Join(...paths);
@@ -241,8 +243,10 @@ describe('setup-go', () => {
   });
 
   it('should return manifest from raw URL if repo fetch fails', async () => {
-    getManifestSpy.mockRejectedValue(new Error('Fetch failed'));
-    httpmGetJsonSpy.mockResolvedValue({
+    (getManifestSpy as jest.Mock<any>).mockRejectedValue(
+      new Error('Fetch failed')
+    );
+    (httpmGetJsonSpy as jest.Mock<any>).mockResolvedValue({
       result: goTestManifest
     });
     const manifest = await im.getManifest(undefined);
@@ -887,7 +891,7 @@ describe('setup-go', () => {
       getManifestSpy.mockImplementation(() => {
         throw new Error('Unable to download manifest');
       });
-      httpmGetJsonSpy.mockRejectedValue(
+      (httpmGetJsonSpy as jest.Mock<any>).mockRejectedValue(
         new Error('Unable to download manifest from raw URL')
       );
 

@@ -53,10 +53,8 @@ describe('getCommandOutput', () => {
     const stdoutResult = ' stdout ';
     const trimmedStdout = stdoutResult.trim();
 
-    getExecOutputSpy.mockImplementation((commandLine: string) => {
-      return new Promise<exec.ExecOutput>(resolve => {
-        resolve({exitCode: 0, stdout: stdoutResult, stderr: ''});
-      });
+    getExecOutputSpy.mockImplementation(async (commandLine: string) => {
+      return {exitCode: 0, stdout: stdoutResult, stderr: ''};
     });
 
     //Act + Assert
@@ -69,10 +67,8 @@ describe('getCommandOutput', () => {
     //Arrange
     const stderrResult = 'error message';
 
-    getExecOutputSpy.mockImplementation((commandLine: string) => {
-      return new Promise<exec.ExecOutput>(resolve => {
-        resolve({exitCode: 10, stdout: '', stderr: stderrResult});
-      });
+    getExecOutputSpy.mockImplementation(async (commandLine: string) => {
+      return {exitCode: 10, stdout: '', stderr: stderrResult};
     });
 
     //Act + Assert
@@ -121,10 +117,8 @@ describe('getCacheDirectoryPath', () => {
 
   it('should return path to the cache folders which specified package manager uses', async () => {
     //Arrange
-    getExecOutputSpy.mockImplementation((commandLine: string) => {
-      return new Promise<exec.ExecOutput>(resolve => {
-        resolve({exitCode: 0, stdout: 'path/to/cache/folder', stderr: ''});
-      });
+    getExecOutputSpy.mockImplementation(async (commandLine: string) => {
+      return {exitCode: 0, stdout: 'path/to/cache/folder', stderr: ''};
     });
 
     const expectedResult = ['path/to/cache/folder', 'path/to/cache/folder'];
@@ -137,16 +131,12 @@ describe('getCacheDirectoryPath', () => {
 
   it('should return path to the cache folder if one command return empty str', async () => {
     //Arrange
-    getExecOutputSpy.mockImplementationOnce((commandLine: string) => {
-      return new Promise<exec.ExecOutput>(resolve => {
-        resolve({exitCode: 0, stdout: 'path/to/cache/folder', stderr: ''});
-      });
+    getExecOutputSpy.mockImplementationOnce(async (commandLine: string) => {
+      return {exitCode: 0, stdout: 'path/to/cache/folder', stderr: ''};
     });
 
-    getExecOutputSpy.mockImplementationOnce((commandLine: string) => {
-      return new Promise<exec.ExecOutput>(resolve => {
-        resolve({exitCode: 0, stdout: '', stderr: ''});
-      });
+    getExecOutputSpy.mockImplementationOnce(async (commandLine: string) => {
+      return {exitCode: 0, stdout: '', stderr: ''};
     });
 
     const expectedResult = ['path/to/cache/folder'];
@@ -158,10 +148,8 @@ describe('getCacheDirectoryPath', () => {
   });
 
   it('should throw if the both commands return empty str', async () => {
-    getExecOutputSpy.mockImplementation((commandLine: string) => {
-      return new Promise<exec.ExecOutput>(resolve => {
-        resolve({exitCode: 10, stdout: '', stderr: ''});
-      });
+    getExecOutputSpy.mockImplementation(async (commandLine: string) => {
+      return {exitCode: 10, stdout: '', stderr: ''};
     });
 
     //Act + Assert
@@ -171,10 +159,8 @@ describe('getCacheDirectoryPath', () => {
   });
 
   it('should throw if the specified package name is invalid', async () => {
-    getExecOutputSpy.mockImplementation((commandLine: string) => {
-      return new Promise<exec.ExecOutput>(resolve => {
-        resolve({exitCode: 10, stdout: '', stderr: 'Error message'});
-      });
+    getExecOutputSpy.mockImplementation(async (commandLine: string) => {
+      return {exitCode: 10, stdout: '', stderr: 'Error message'};
     });
 
     //Act + Assert
