@@ -210,6 +210,10 @@ describe('setup-go', () => {
     delete process.env[im.GOTOOLCHAIN_ENV_VAR];
     delete process.env['GO_DOWNLOAD_BASE_URL'];
 
+    // reset the exit code that core.setFailed sets on the error-path tests so
+    // that a passing run does not leak a non-zero process exit code
+    process.exitCode = 0;
+
     //jest.resetAllMocks();
     jest.clearAllMocks();
     //jest.restoreAllMocks();
