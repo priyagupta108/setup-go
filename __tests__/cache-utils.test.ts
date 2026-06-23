@@ -241,7 +241,7 @@ describe('isCacheFeatureAvailable', () => {
 });
 
 describe('isGhes', () => {
-  const pristineEnv = process.env;
+  const pristineEnv = {...process.env};
 
   beforeEach(() => {
     process.env = {...pristineEnv};
