@@ -43238,10 +43238,10 @@ async function getGo(versionSpec, checkLatest, auth, arch = external_os_default(
             const downloadUrl = info?.downloadUrl || customBaseUrl;
             if (err instanceof HTTPError && err.httpStatusCode === 404) {
                 throw new Error(`The requested Go version ${versionSpec} is not available for platform ${osPlat}/${arch}. ` +
-                    `Download URL returned HTTP 404: ${downloadUrl}`);
+                    `Download URL returned HTTP 404: ${downloadUrl}`, { cause: err });
             }
             throw new Error(`Failed to download Go ${versionSpec} for platform ${osPlat}/${arch} ` +
-                `from ${downloadUrl}: ${err}`);
+                `from ${downloadUrl}: ${err}`, { cause: err });
         }
     }
     else {
@@ -43281,7 +43281,9 @@ async function getGo(versionSpec, checkLatest, auth, arch = external_os_default(
                 downloadPath = await installGoVersion(info, undefined, arch);
             }
             catch (err) {
-                throw new Error(`Failed to download version ${versionSpec}: ${err}`);
+                throw new Error(`Failed to download version ${versionSpec}: ${err}`, {
+                    cause: err
+                });
             }
         }
     }
